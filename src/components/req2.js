@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import '../style.css';
   import firebase from 'firebase/compat/app';
   import 'firebase/compat/firestore';
+  import Header from "./Header";
 
 const firebaseConfig = {
     // Your Firebase config here
@@ -17,7 +18,7 @@ const firebaseConfig = {
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-function Req1() {
+function Req2() {
 
     function handleFormSubmit(event) {
       const timestamp = Date.now().toString(36);
@@ -29,8 +30,18 @@ function Req1() {
       
 
     function addData2(uniqueId) {
-        var name = document.getElementById("name").value;
-        var email = document.getElementById("email").value;
+      var name = document.getElementById("name").value.toLowerCase();
+      var email = document.getElementById("email").value;
+      const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+      const currentDate = new Date();
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const day = currentDate.getDate();
+
+
+const date = `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+        
         // var quantity = document.getElementById("quantity").value;
       
         // Set a new document with the custom ID in the "users" collection
@@ -39,8 +50,9 @@ function Req1() {
           .set({
             name: name,
             email: email,
-            device: "NVIDIA Jetson NanoDevloper Kit",
+            device: "NVIDIA Jetson Nano Developer Kit",
             // quantity: quantity,
+            date:date,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             uniqueId:uniqueId,
           })
@@ -56,9 +68,10 @@ function Req1() {
 
   return (
     <Fragment>
+      <Header/>
       <div className="div">
       <form className="form" onSubmit={handleFormSubmit}>
-<h2><span className="span" >Request for NVIDIA Jetson NanoDevloper Kit</span> </h2>
+<h2><span className="span" >Request for NVIDIA Jetson Nano Developer Kit</span> </h2>
  <input className="input1" placeholder="Enter your name" type="text" id="name" required />
 
  <input className="input1" placeholder="Enter your email" type="email" id="email" required />
@@ -71,4 +84,4 @@ function Req1() {
   );
 }
 
-export default Req1;
+export default Req2;

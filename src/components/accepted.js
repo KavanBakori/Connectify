@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { differenceInDays, format, parse } from 'date-fns';
+import 'datatables.net';
+// import 'datatables.net-dt/css/jquery.dataTables.css';
+import $ from 'jquery';
+import Header from './Header';
 
 
 const firebaseConfig = {
@@ -15,35 +19,43 @@ const firebaseConfig = {
     appId: "1:375706491870:web:a25785c309e9e9ab1a1b4f"
 };
 
+
+
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 function Accepted() {
-    const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
+  const tableRef = useRef(null);
 
-    useEffect(() => {
-        fetchAndDisplayData1();
-    }, []);
+  useEffect(() => {
+    fetchAndDisplayData1();
+  }, []);
 
-    function fetchAndDisplayData1() {
-        // Fetch data from Firestore with 'orderBy' clause for timestamp field
-        db.collection('accept')
-            .get()
-            .then(function (querySnapshot) {
-                const fetchedData = [];
-                querySnapshot.forEach(function (doc) {
-                    const data = doc.data();
-                    fetchedData.push(data);
-                });
-                setData(fetchedData);
-
-            })
-            .catch(function (error) {
-                console.error('Error fetching data: ', error);
-                alert('Error fetching data. Please try again!');
-            });
-
+  useEffect(() => {
+    if (data.length > 0) {
+      $(tableRef.current).DataTable();
     }
+  }, [data]);
+
+  function fetchAndDisplayData1() {
+    // Fetch data from Firestore with 'orderBy' clause for timestamp field
+    db.collection('accept')
+      .get()
+      .then(function (querySnapshot) {
+        const fetchedData = [];
+        querySnapshot.forEach(function (doc) {
+          const data = doc.data();
+          fetchedData.push(data);
+        });
+        setData(fetchedData);
+      })
+      .catch(function (error) {
+        console.error('Error fetching data: ', error);
+        alert('Error fetching data. Please try again!');
+      });
+  }
 
     function handleAccept(email, device, name,acceptDate,uniqueId) {
         accept(email, device, name,acceptDate,uniqueId);
@@ -172,7 +184,7 @@ function Accepted() {
 
     function color(days){
 
-        if(days<=13 && days>5){
+        if(days<=7 && days>5){
             return `#f0e68c`;
         }
         else if(days<=5){
@@ -184,38 +196,48 @@ function Accepted() {
 
     return (
         <div>
-            <h1 style={{ textAlign: 'center', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>Current Users</h1>
-            <table style={{ margin: 'auto',width:`1500px` }}>
-                <thead>
-                    <tr>
-                        <th>Last Date</th>
-                        <th>Remaining Days</th>
-                        <th>Name</th>
-                        <th style={{width:`100px`}}>Email</th>
-                        <th style={{padding:`20px`}}>Device</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((item, index) => (
-                        <tr key={index} style={{backgroundColor:color(differenceInDays(parse(item.lastDate, 'dd-MM-yyyy', new Date()), new Date()))}}>
-                            <td>{item.lastDate}</td>
-                            <td>{differenceInDays(parse(item.lastDate, 'dd-MM-yyyy', new Date()), new Date())}</td>
-                            <td>{item.name}</td>
-                            <td> <a href={`mailto:${item.email}`}>{item.email}</a></td>
-                            <td>{item.device}</td>
-                            <td>
-                                <button onClick={() => handleAccept(item.email, item.device, item.name,item.acceptDate,item.uniqueId)} >Stop Access</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+          <Header/>
+          <h1 style={{ textAlign: 'center', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" ,marginTop:'50px'}}>
+            Current Users
+          </h1>
+          <table ref={tableRef} style={{ margin: 'auto', width: '1500px' }}>
+            <thead>
+              <tr>
+                <th>Last Date</th>
+                <th>Remaining Days</th>
+                <th>Name</th>
+                <th style={{ width: '100px' }}>Email</th>
+                <th style={{ padding: '20px' }}>Device</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr key={index} style={{ backgroundColor: color(differenceInDays(parse(item.lastDate, 'dd-MM-yyyy', new Date()), new Date())) }}>
+                  <td>{item.lastDate}</td>
+                  <td>{differenceInDays(parse(item.lastDate, 'dd-MM-yyyy', new Date()), new Date())}</td>
+                  <td>{item.name}</td>
+                  <td>
+                    <a href={`mailto:${item.email}`}>{item.email}</a>
+                  </td>
+                  <td>{item.device}</td>
+                  <td>
+                    <button
+                      className="inbutton2"
+                      onClick={() => handleAccept(item.email, item.device, item.name, item.acceptDate, item.uniqueId)}
+                    >
+                      Stop Access
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-    );
-}
-
-export default Accepted;
+      );
+    }
+    
+    export default Accepted;
 
 
 

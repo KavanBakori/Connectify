@@ -4,7 +4,6 @@ import 'firebase/compat/firestore';
 import 'datatables.net';
 // import 'datatables.net-dt/css/jquery.dataTables.css';
 import $ from 'jquery';
-import Header from './Header';
 
 const firebaseConfig = {
   // Your Firebase config here
@@ -86,7 +85,7 @@ function Table() {
             } else {
               alert('Currently '+device + ' is not available');
             }
-          } else if (device === 'NVIDIA Jetson Nano Developer Kit') {
+          } else if (device === 'NVIDIA Jetson NanoDevloper Kit') {
             if (new2 > 0) {
               db.collection('devices')
                 .doc('device')
@@ -196,7 +195,6 @@ function Table() {
 
   return (
     <div>
-      <Header/>
       <button id="third" className="both" onClick={signout}>
         Signout
       </button>
@@ -208,7 +206,6 @@ function Table() {
         <thead>
           <tr>
             <th>Sr No.</th>
-            <th>Date</th>
             <th>Name</th>
             <th>Email</th>
             <th>Device</th>
@@ -219,7 +216,6 @@ function Table() {
           {data.map((item, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
-              <td>{item.date}</td>
               <td>{item.name}</td>
               <td>
                 <a href={`mailto:${item.email}`}>{item.email}</a>

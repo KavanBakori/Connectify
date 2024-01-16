@@ -3,6 +3,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "../style.css";
 import Allreq from "./allreq";
+import Header from "./Header";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBm6S_Mbqjhefzpu4g-O8N_X1yvld1f_oI",
@@ -38,6 +39,7 @@ function Login() {
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((result) => {
       // Signed in
+      alert("sign in successful");
       window.location.href = "allreq";
     })
     .catch((error) => {
@@ -53,17 +55,18 @@ function Login() {
       .auth()
       .sendPasswordResetEmail(email)
       .then(() => {
-        document.write(
-          `Your password reset link successfully sent..Please check your email...${email}`
+        alert(
+          `Your password reset link successfully sent on ${email} \nPlease check your email`
         );
       })
       .catch((error) => {
-        alert("Something went wrong please try again...");
+        alert("Something went wrong please try again!");
       });
   }
 
   return (
     <Fragment>
+      <Header/>
       <div className="containe">
         <label>Email:</label>
         <input type="email" placeholder="Enter Email" name="email" id="email" required />

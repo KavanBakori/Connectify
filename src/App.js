@@ -6,6 +6,7 @@ import Req3 from './components/req3';
 import Allreq from './components/allreq';
 import Accepted from './components/accepted';
 import History from './components/history';
+import Table from './components/table';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App(){
@@ -21,6 +22,7 @@ function App(){
         <Route path='/allreq' element={<Allreq/>}/>
         <Route path='/accepted' element={<Accepted/>}/>
         <Route path='/history' element={<History/>}/>
+        <Route path='/table' element={<Table/>}/>
       </Routes>
     </Router>
    </div>
